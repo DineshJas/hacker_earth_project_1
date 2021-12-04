@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
 
+import { getDataFromApi } from './action/Data';
+import BarChartComponent from './components/BarChartComponent';
+import PieChartComponent from './components/PieChartComponent';
+
 function App() {
+
+  const dispatch = useDispatch();
+  const data = useSelector(state => state.DataReducer.dataForGraph);
+
+  useEffect(() => {
+    getDataFromApi(dispatch)
+  }, [dispatch]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {data.length && data.map((value, index) => (
+        value.type === 'Pie' ? 
+            <PieChartComponent key={index} elements={value.elements} /> : 
+        value.type === 'Bar' ? 
+            <BarChartComponent key={index} elements={value.elements} /> : ''
+      ))}
     </div>
   );
 }
